@@ -2,67 +2,54 @@
 
 # LibreSpeed
 
-No Flash, No Java, No Websocket, No Bullshit.
+Sem Flash, Java, Websocket, besteira.
 
-This is a very lightweight Speedtest implemented in Javascript, using XMLHttpRequest and Web Workers.
+Este é um Speedtest leve, implementado em Javascript, usando XMLHttpRequest e Web Workers.
 
-## Try it
-[Take a Speedtest](https://librespeed.org)
+## Teste
+[Teste aqui](https://librespeed.org)
 
-## Compatibility
-All modern browsers are supported: IE11, latest Edge, latest Chrome, latest Firefox, latest Safari.  
-Works with mobile versions too.
+## Compatibilidade
+Todos os navegadores modernos são suportados: IE11, mais recente Edge, mais recente Chrome, mais recente Firefox, mais recente Safari.
+Também funciona com versões móveis.
 
 ## Features
 * Download
 * Upload
 * Ping
 * Jitter
-* IP Address, ISP, distance from server (optional)
-* Telemetry (optional)
-* Results sharing (optional)
-* Multiple Points of Test (optional)
+* IP Address, ISP, distância do servidor (opcional)
+* Telemetria (optional)
+* Compartilhamento de resultados (opcional)
+* Vários pontos de teste (opcional)
 
-![Screenshot](https://speedtest.fdossena.com/mpot_v6.gif)
+![Captura de tela](https://speedtest.fdossena.com/mpot_v6.gif)
 
 
-## Server requirements
-* A reasonably fast web server with Apache 2 (nginx, IIS also supported)
-* PHP 5.4 (other backends also available)
-* MySQL database to store test results (optional, PostgreSQL and SQLite also supported)
-* A fast! internet connection
+## Requisitos do servidor
+* Um servidor Web com Apache 2 (nginx, IIS também suportado)
+* PHP 5.4 (outros back-ends também disponíveis)
+* Banco de dados MySQL/MariaDB para armazenar os resultados dos testes (opcional, PostgreSQL e SQLite também são suportados)
+* Uma rápida conexão de internet
 
-## Installation videos
-* [Quick start installation guide for Ubuntu Server 19.04](https://fdossena.com/?p=speedtest/quickstart_v5_ubuntu.frag)
+## Vídeos de instalação
+* [Guia de instalação rápida do Ubuntu Server 19.04](https://fdossena.com/?p=speedtest/quickstart_v5_ubuntu.frag)
 
 ## Android app
-A template to build an Android client for your LibreSpeed installation is available [here](https://github.com/librespeed/speedtest-android).
-
-## Docker
-Please see the `docker` branch
-
-## Go backend
-A Go implementation is available in the `go` branch, maintained by [Maddie Zhan](https://github.com/maddie).
-
-## Node.js backend
-A partial Node.js implementation is available in the `node` branch, developed by [dunklesToast](https://github.com/dunklesToast). It's not recommended to use at the moment.
-
-## Donate
-[![Donate with Liberapay](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/fdossena/donate)  
-[Donate with PayPal](https://www.paypal.me/sineisochronic)  
+Um modelo para criar um cliente Android para sua instalação do LibreSpeed está disponível [aqui]
 
 ## License
-Copyright (C) 2016-2020 Federico Dossena
+Direitos autorais (C) 2016-2020 Federico Dossena
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+Este programa é um software gratuito: você pode redistribuí-lo e / ou modificar
+nos termos da Licença Pública Geral Menor GNU, publicada pela
+Free Software Foundation, versão 3 da Licença ou
+(a seu critério) qualquer versão posterior.
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+Este programa é distribuído na esperança de que seja útil,
+mas SEM QUALQUER GARANTIA; sem sequer a garantia implícita de
+COMERCIALIZAÇÃO ou ADEQUAÇÃO PARA UMA FINALIDADE ESPECÍFICA. Veja o
+GNU General Public License para mais detalhes.
 
-You should have received a copy of the GNU Lesser General Public License
-along with this program.  If not, see <https://www.gnu.org/licenses/lgpl>.
+Você deveria ter recebido uma cópia da Licença Pública Geral Menor GNU
+junto com este programa. Caso contrário, consulte <https://www.gnu.org/licenses/lgpl>.
