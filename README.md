@@ -25,15 +25,11 @@ Também funciona com versões móveis.
 
 ![Captura de tela](https://speedtest.fdossena.com/mpot_v6.gif)
 
-
 ## Requisitos do servidor
 * Um servidor Web com Apache 2 (nginx, IIS também suportado)
 * PHP 5.4 (outros back-ends também disponíveis)
 * Banco de dados MySQL/MariaDB para armazenar os resultados dos testes (opcional, PostgreSQL e SQLite também são suportados)
 * Uma rápida conexão de internet
-
-## Vídeos de instalação
-* [Guia de instalação rápida do Ubuntu Server 19.04](https://fdossena.com/?p=speedtest/quickstart_v5_ubuntu.frag)
 
 ## Android app
 Um modelo para criar um cliente Android para sua instalação do LibreSpeed está disponível [aqui]
