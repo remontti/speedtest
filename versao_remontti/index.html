@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no, user-scalable=no" />
+<meta charset="UTF-8" />
+<link rel="shortcut icon" href="favicon.ico">
+ <meta name="theme-color" content="#212121">
+<script type="text/javascript" src="speedtest.js"></script>
+<script type="text/javascript">
+function I(i){return document.getElementById(i);}
+//INITIALIZE SPEEDTEST
+var s=new Speedtest();
+s.setParameter("telemetry_level","basic");
+
+var meterBk=/Trident.*rv:(\d+\.\d+)/i.test(navigator.userAgent)?"#424242":"#424242";
+var dlColor="#00E676",
+	ulColor="#00E5FF";
+var progColorD="#00E676";
+var progColorU="#00E5FF";
+
+//CODE FOR GAUGES
+function drawMeter(c,amount,bk,fg,progress,prog){
+	var ctx=c.getContext("2d");
+	var dp=window.devicePixelRatio||1;
+	var cw=c.clientWidth*dp, ch=c.clientHeight*dp;
+	var sizScale=ch*0.0055;
+	if(c.width==cw&&c.height==ch){
+		ctx.clearRect(0,0,cw,ch);
+	}else{
+		c.width=cw;
+		c.height=ch;
+	}
+	ctx.beginPath();
+	ctx.strokeStyle=bk;
+	ctx.lineWidth=20*sizScale;
+	ctx.arc(c.width/2,c.height-58*sizScale,c.height/1.8-ctx.lineWidth,-Math.PI*1.1,Math.PI*0.1);
+	ctx.stroke();
+	ctx.beginPath();
+	ctx.strokeStyle=fg;
+	ctx.lineWidth=22*sizScale;
+	ctx.arc(c.width/2,c.height-58*sizScale,c.height/1.8-ctx.lineWidth,-Math.PI*1.1,amount*Math.PI*1.2-Math.PI*1.1);
+	ctx.stroke();
+	if(typeof progress !== "undefined"){
+		ctx.fillStyle=prog;
+		ctx.fillRect(c.width*0.3,c.height-16*sizScale,c.width*0.4*progress,8*sizScale);
+	}
+
+}
+function mbpsToAmount(s){
+	return 1-(1/(Math.pow(1.3,Math.sqrt(s))));
+}
+function format(d){
+    d=Number(d);
+    if(d<10) return d.toFixed(2);
+    if(d<100) return d.toFixed(1);
+    return d.toFixed(0);
+}
+
+//UI CODE
+var uiData=null;
+function startStop(){
+	// Oculta recomendacoes
+	var x = document.getElementById("recomend");
+	if (x.style.display === "none") {
+		x.style.display = "block";
+	} else {
+		x.style.display = "none";
+	}
+
+    if(s.getState()==3){
+		//speedtest is running, abort
+		s.abort();
+		data=null;
+		I("startStopBtn").className="";
+		initUI();
+	}else{
+		//test is not running, begin
+		I("startStopBtn").className="running";
+		I("shareArea").style.display="none";
+		s.onupdate=function(data){
+            uiData=data;
+		};
+		s.onend=function(aborted){
+            I("startStopBtn").className="";
+            updateUI(true);
+            if(!aborted){
+                //if testId is present, show sharing panel, otherwise do nothing
+                try{
+                    var testId=uiData.testId;
+                    if(testId!=null){
+                        var shareURL=window.location.href.substring(0,window.location.href.lastIndexOf("/"))+"/results/?id="+testId;
+                        I("resultsImg").src=shareURL;
+                        I("resultsURL").value=shareURL;                        
+                        I("shareArea").style.display="";
+                    }
+                }catch(e){}
+            }
+		};
+		s.start();
+	}
+}
+//this function reads the data sent back by the test and updates the UI
+function updateUI(forced){
+	if(!forced&&s.getState()!=3) return;
+	if(uiData==null) return;
+	var status=uiData.testState;
+	I("ip").textContent=uiData.clientIp;
+	I("dlText").textContent=(status==1&&uiData.dlStatus==0)?"...":format(uiData.dlStatus);
+	drawMeter(I("dlMeter"),mbpsToAmount(Number(uiData.dlStatus*(status==1?oscillate():1))),meterBk,dlColor,Number(uiData.dlProgress),progColorD);
+	I("ulText").textContent=(status==3&&uiData.ulStatus==0)?"...":format(uiData.ulStatus);
+	drawMeter(I("ulMeter"),mbpsToAmount(Number(uiData.ulStatus*(status==3?oscillate():1))),meterBk,ulColor,Number(uiData.ulProgress),progColorU);
+	I("pingText").textContent=format(uiData.pingStatus);
+	I("jitText").textContent=format(uiData.jitterStatus);
+}
+function oscillate(){
+	return 1+0.02*Math.sin(Date.now()/100);
+}
+//update the UI every frame
+window.requestAnimationFrame=window.requestAnimationFrame||window.webkitRequestAnimationFrame||window.mozRequestAnimationFrame||window.msRequestAnimationFrame||(function(callback,element){setTimeout(callback,1000/60);});
+function frame(){
+	requestAnimationFrame(frame);
+	updateUI();
+}
+frame(); //start frame loop
+//function to (re)initialize UI
+function initUI(){
+	drawMeter(I("dlMeter"),0,meterBk,dlColor,0);
+	drawMeter(I("ulMeter"),0,meterBk,ulColor,0);
+	I("dlText").textContent="";
+	I("ulText").textContent="";
+	I("pingText").textContent="";
+	I("jitText").textContent="";
+	I("ip").textContent="";
+}
+</script>
+<style type="text/css">
+	@font-face {
+	  font-family: OpenSansBold;
+	  src: url(results/OpenSans-Semibold.ttf);
+	}
+	@font-face {
+	  font-family: OpenSans;
+	  src: url(results/OpenSans-Light.ttf);
+	}
+	@keyframes shadow-pulse
+	{
+	     0% {
+	          box-shadow: 0 0 0 0px #40C4FF;
+	     }
+	     100% {
+	          box-shadow: 0 0 0 15px rgba(0, 0, 0, 0);
+	     }
+	}
+	@keyframes shadow-pulsered
+	{
+	     0% {
+	          box-shadow: 0 0 0 0px #FF6060;
+	     }
+	     100% {
+	          box-shadow: 0 0 0 15px rgba(0, 0, 0, 0);
+	     }
+	}
+
+	html,body{
+		border:none; padding:0; margin:0;
+		background:#212121;
+		color:#E0E0E0;
+	}
+	body{
+		text-align:center;
+		font-family:"OpenSans",sans-serif;
+	}
+	#startStopBtn{
+		display:inline-block;
+		width: 100px;
+		height: 100px;
+		font: 18px/100px 'OpenSans', sans-serif;
+		text-transform: uppercase;
+		letter-spacing: 0.1px;
+		color: #fff;
+		text-align: center;
+		font-weight: bold;
+		border-radius: 50%;
+		border:0.15em solid #40C4FF;
+		animation: shadow-pulse 1s 10;
+		cursor:pointer;
+
+	}
+	#startStopBtn.running{
+		background-color:#B71C1C;
+		border-color:#FF6060;
+		color:#FFFFFF;
+		animation: shadow-pulsered 1s 2;
+	}
+	#startStopBtn:before{
+		content:"Iniciar";
+	}
+	#startStopBtn.running:before{
+		content:"Cancelar";
+	}
+	#test{
+		margin-bottom:12em;
+	}
+	div.testArea{
+		display:inline-block;
+		width:16em;
+		height:12.5em;
+		position:relative;
+		box-sizing:border-box;
+	}
+	div.testArea2{
+		display:inline-block;
+		width:14em;
+		height:7em;
+		position:relative;
+		box-sizing:border-box;
+		text-align:center;
+	}
+	div.testArea div.testName{
+		position:absolute;
+		top:0.1em; left:0;
+		width:100%;
+		font-size:1.2em;
+		z-index:9;
+	}
+	div.testArea2 div.testName{
+        display:block;
+        text-align:center;
+        font-size:1.2em;
+	}
+	div.testArea div.meterText{
+		position:absolute;
+		bottom:1.55em; left:0;
+		width:100%;
+		font-size:2.2em;
+		z-index:9;
+	}
+	div.testArea2 div.meterText{
+        display:inline-block;
+        font-size:1.5em;
+	}
+	div.meterText:empty:before{
+		content:"0.00";
+	}
+	div.testArea div.unit{
+		position:absolute;
+		bottom:2em; left:0;
+		width:100%;
+		z-index:9;
+	}
+	div.testArea2 div.unit{
+		display:inline-block;
+	}
+	div.testArea canvas{
+		position:absolute;
+		top:0; left:0; width:100%; height:100%;
+		z-index:1;
+	}
+	div.testGroup{
+		display:block;
+        margin: 0 auto;
+	}
+	#shareArea{
+		width:95%;
+		max-width:40em;
+		margin:0 auto;
+		margin-top:2em;
+	}
+	#shareArea > *{
+		display:block;		
+		height:auto;
+		margin: auto;
+		max-width: 100%;
+	}
+	#resultsURL {
+		text-align: center;
+		background: #212121;
+		cursor:pointer;
+		color: #40C4FF;
+		border-width:0px;
+		border:none;
+		font-size: 0.8em;
+		font-family:"OpenSans",sans-serif;
+		width:100%;
+		padding: 10px;
+	}
+	#recomend{
+		text-align: center; 
+		font-size: 0.9em;
+		color: #BDBDBD;
+	}
+	#cabecalho {
+		padding: 10px;
+	}
+	#logo {
+		height: 50px;
+		margin-top: 5px;
+	}
+	h1{
+		color:#FFF;
+		margin: 0px;
+		font-family:"OpenSansBold",sans-serif;
+	}
+	@media all and (max-width:40em){
+		body{
+			font-size:0.8em;
+		}
+	}
+</style>
+<title>Testador de Velocidade</title>
+</head>
+<body>
+<div id="cabecalho">
+<h1>Teste sua Velocidade</h1>
+<!--<img id="logo" src="logo.png">-->
+</div>
+<div id="testWrapper">
+	<div id="startStopBtn" onclick="startStop()"></div><br/>
+	<div id="test">
+		<div class="testGroup">
+			<div class="testArea2">
+				<div class="testName">Ping</div>
+				<div id="pingText" class="meterText" style="color:#FF9100"></div>
+				<div class="unit">ms</div>
+			</div>
+			<div class="testArea2">
+				<div class="testName">Jitter</div>
+				<div id="jitText" class="meterText" style="color:#FF9100"></div>
+				<div class="unit">ms</div>
+			</div>
+		</div>
+		<div class="testGroup">
+			<div class="testArea">
+				<div class="testName">Download</div>
+				<canvas id="dlMeter" class="meter"></canvas>
+				<div id="dlText" class="meterText"></div>
+				<div class="unit">Mbps</div>
+			</div>
+			<div class="testArea">
+				<div class="testName">Upload</div>
+				<canvas id="ulMeter" class="meter"></canvas>
+				<div id="ulText" class="meterText"></div>
+				<div class="unit">Mbps</div>
+			</div>
+		</div>
+
+		<div id="recomend">
+			<b>Recomendações</b> <br />
+			&raquo; Faça o teste se possível por meio de um cabo de rede. <br />
+			&raquo; Peça para outras pessoas que desliguem seu dispositivo.<br />
+			&raquo; Feche todos os programas e atualizações.<br />
+			&raquo; Repita o teste mais de uma vez.
+		</div>
+		<div id="ipArea">
+			<span id="ip"></span>
+		</div>
+		<div id="shareArea" style="display:none">			
+			<h3>Compartilhar URL do resultado:</h3>
+			<input type="text" value="" id="resultsURL" readonly="readonly" onclick="this.select();this.focus();this.select();document.execCommand('copy');alert('Link copiado')"/>
+			<img src="" id="resultsImg" />	
+		</div>		
+	</div>
+</div>
+<script type="text/javascript">setTimeout(function(){initUI()},100);</script>
+</body>
+</html>
